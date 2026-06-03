@@ -31,6 +31,7 @@ create table if not exists member_character_status (
     id             uuid primary key default gen_random_uuid(),
     member_id      uuid not null references members(id) on delete cascade,
     character_name text not null,
+    -- フロント側では未所持時に行を削除するが、外部連携時の明示フラグとして保持
     owned          boolean not null default true,
     constellation  integer,
     created_at     timestamptz not null default now(),
@@ -55,6 +56,7 @@ create table if not exists member_weapon_status (
     id          uuid primary key default gen_random_uuid(),
     member_id   uuid not null references members(id) on delete cascade,
     weapon_name text not null,
+    -- フロント側では未所持時に行を削除するが、外部連携時の明示フラグとして保持
     owned       boolean not null default true,
     refinement  integer,
     created_at  timestamptz not null default now(),

@@ -737,7 +737,7 @@ async function loadCharOwnership(memberId) {
     if (error) throw error;
     charOwnership.clear();
     (data || []).forEach(row => {
-        if (row.owned === false) return;
+        if (!row.owned) return;
         charOwnership.set(row.character_name, row.constellation);
     });
 }
@@ -750,7 +750,7 @@ async function loadWeaponOwnership(memberId) {
     if (error) throw error;
     weaponOwnership.clear();
     (data || []).forEach(row => {
-        if (row.owned === false) return;
+        if (!row.owned) return;
         weaponOwnership.set(row.weapon_name, row.refinement);
     });
 }

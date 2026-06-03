@@ -26,6 +26,8 @@ create table if not exists members (
 --      NULL  = 未所持
 --      0     = 無凸
 --      1〜6  = N凸
+--    level:
+--      1〜90 = キャラクターレベル
 -- ============================================================
 create table if not exists member_character_status (
     id             uuid primary key default gen_random_uuid(),
@@ -34,6 +36,7 @@ create table if not exists member_character_status (
     -- フロント側では未所持時に行を削除するが、外部連携時の明示フラグとして保持
     owned          boolean not null default true,
     constellation  integer,
+    level          integer not null default 1,
     created_at     timestamptz not null default now(),
     updated_at     timestamptz not null default now(),
     unique(member_id, character_name)
@@ -44,6 +47,10 @@ create index if not exists idx_member_character_status_member on member_characte
 -- constellation の値を制約
 alter table member_character_status
     add constraint constellation_range check (constellation is null or (constellation >= 0 and constellation <= 6));
+
+-- level の値を制約
+alter table member_character_status
+    add constraint level_range check (level >= 1 and level <= 90);
 
 -- ============================================================
 -- 3. member_weapon_status テーブル

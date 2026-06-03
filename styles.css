@@ -376,7 +376,8 @@ body {
 }
 
 .const-select,
-.ref-select {
+.ref-select,
+.level-input {
   width: 100%;
   background: #0f1a30;
   color: #c0d0f0;
@@ -388,12 +389,14 @@ body {
   cursor: pointer;
 }
 .const-select:disabled,
-.ref-select:disabled {
+.ref-select:disabled,
+.level-input:disabled {
   opacity: 0.35;
   cursor: not-allowed;
 }
 .const-select:focus,
-.ref-select:focus {
+.ref-select:focus,
+.level-input:focus {
   outline: 1px solid #4a80c0;
 }
 

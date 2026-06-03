@@ -688,6 +688,8 @@ let currentTab = 'char';
 
 // Map: character name -> constellation (null=未所持, 0=無凸, 1-6=N凸)
 const charOwnership = new Map();
+// Map: character name -> level (1-90)
+const charLevels = new Map();
 // Map: weapon name -> refinement (null=未所持, 1-5=精錬N)
 const weaponOwnership = new Map();
 
@@ -732,13 +734,15 @@ async function removeMember(id) {
 async function loadCharOwnership(memberId) {
     const { data, error } = await supabaseClient
         .from('member_character_status')
-        .select('character_name, constellation, owned')
+        .select('character_name, constellation, level, owned')
         .eq('member_id', memberId);
     if (error) throw error;
     charOwnership.clear();
+    charLevels.clear();
     (data || []).forEach(row => {
         if (!row.owned) return;
         charOwnership.set(row.character_name, row.constellation);
+        charLevels.set(row.character_name, sanitizeCharLevel(row.level));
     });
 }
 
@@ -755,7 +759,7 @@ async function loadWeaponOwnership(memberId) {
     });
 }
 
-async function saveCharItem(memberId, charName, constellation) {
+async function saveCharItem(memberId, charName, constellation, level) {
     if (constellation === null) {
         const { error } = await supabaseClient
             .from('member_character_status')
@@ -764,12 +768,15 @@ async function saveCharItem(memberId, charName, constellation) {
             .eq('character_name', charName);
         if (error) throw error;
         charOwnership.delete(charName);
+        charLevels.delete(charName);
     } else {
+        const safeLevel = sanitizeCharLevel(level);
         const payload = {
             member_id: memberId,
             character_name: charName,
             owned: true,
-            constellation
+            constellation,
+            level: safeLevel
         };
         const { data: updatedRows, error: updateError } = await supabaseClient
             .from('member_character_status')
@@ -785,6 +792,7 @@ async function saveCharItem(memberId, charName, constellation) {
             if (insertError) throw insertError;
         }
         charOwnership.set(charName, constellation);
+        charLevels.set(charName, safeLevel);
     }
 }
 
@@ -836,6 +844,12 @@ function escapeHtml(str) {
 
 function showLoading(visible) {
     document.getElementById('loadingOverlay').classList.toggle('hidden', !visible);
+}
+
+function sanitizeCharLevel(rawLevel) {
+    const level = parseInt(rawLevel, 10);
+    if (Number.isNaN(level)) return 1;
+    return Math.min(90, Math.max(1, level));
 }
 
 // ================================================
@@ -1006,12 +1020,14 @@ function renderCharTab() {
     }
     filtered.forEach(char => {
         const constellation = charOwnership.has(char.name) ? charOwnership.get(char.name) : null;
-        container.appendChild(createCharCard(char, constellation));
+        const level = charLevels.has(char.name) ? charLevels.get(char.name) : 1;
+        container.appendChild(createCharCard(char, constellation, level));
     });
 }
 
-function createCharCard(char, constellation) {
+function createCharCard(char, constellation, level) {
     const owned = constellation !== null;
+    const initialLevel = sanitizeCharLevel(level);
     const rarity = getCharacterDisplayRarity(char);
     const imgPath = encodeImagePath('character', char.name);
 
@@ -1059,20 +1075,38 @@ function createCharCard(char, constellation) {
         const opt = document.createElement('option');
         opt.value = val;
         opt.textContent = label;
-        if (owned && constellation === parseInt(val)) opt.selected = true;
+        if (owned && constellation === parseInt(val, 10)) opt.selected = true;
         select.appendChild(opt);
     });
+
+    const levelInput = document.createElement('input');
+    levelInput.type = 'number';
+    levelInput.className = 'level-input';
+    levelInput.min = '1';
+    levelInput.max = '90';
+    levelInput.step = '1';
+    levelInput.inputMode = 'numeric';
+    levelInput.value = String(initialLevel);
+    levelInput.disabled = !owned;
 
     checkbox.addEventListener('change', async () => {
         const isOwned = checkbox.checked;
         select.disabled = !isOwned;
+        levelInput.disabled = !isOwned;
         card.classList.toggle('owned', isOwned);
         card.classList.toggle('not-owned', !isOwned);
-        const newConst = isOwned ? parseInt(select.value) : null;
-        if (isOwned) charOwnership.set(char.name, newConst);
-        else charOwnership.delete(char.name);
+        const newConst = isOwned ? parseInt(select.value, 10) : null;
+        const newLevel = isOwned ? sanitizeCharLevel(levelInput.value) : null;
+        if (isOwned) {
+            charOwnership.set(char.name, newConst);
+            charLevels.set(char.name, newLevel);
+            levelInput.value = String(newLevel);
+        } else {
+            charOwnership.delete(char.name);
+            charLevels.delete(char.name);
+        }
         try {
-            await saveCharItem(currentMemberId, char.name, newConst);
+            await saveCharItem(currentMemberId, char.name, newConst, newLevel);
         } catch (err) {
             console.error('Save error:', err);
             alert('保存エラー: ' + err.message);
@@ -1081,17 +1115,35 @@ function createCharCard(char, constellation) {
 
     select.addEventListener('change', async () => {
         if (!checkbox.checked) return;
-        const newConst = parseInt(select.value);
+        const newConst = parseInt(select.value, 10);
+        const newLevel = sanitizeCharLevel(levelInput.value);
         charOwnership.set(char.name, newConst);
+        charLevels.set(char.name, newLevel);
+        levelInput.value = String(newLevel);
         try {
-            await saveCharItem(currentMemberId, char.name, newConst);
+            await saveCharItem(currentMemberId, char.name, newConst, newLevel);
         } catch (err) {
             console.error('Save error:', err);
             alert('保存エラー: ' + err.message);
         }
     });
 
-    controls.append(label, select);
+    levelInput.addEventListener('change', async () => {
+        if (!checkbox.checked) return;
+        const newConst = parseInt(select.value, 10);
+        const newLevel = sanitizeCharLevel(levelInput.value);
+        levelInput.value = String(newLevel);
+        charOwnership.set(char.name, newConst);
+        charLevels.set(char.name, newLevel);
+        try {
+            await saveCharItem(currentMemberId, char.name, newConst, newLevel);
+        } catch (err) {
+            console.error('Save error:', err);
+            alert('保存エラー: ' + err.message);
+        }
+    });
+
+    controls.append(label, select, levelInput);
     info.append(nameEl, controls);
     card.append(imgWrap, info);
     return card;

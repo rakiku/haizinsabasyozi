@@ -1250,10 +1250,16 @@ function createWeaponCard(weapon, refinement) {
 document.getElementById('backBtn').addEventListener('click', showHomeView);
 
 document.getElementById('tabBtnChar').addEventListener('click', () => {
-    if (currentTab !== 'char') showTab('char');
+    if (currentTab !== 'char') {
+        showTab('char');
+        renderCurrentTab();
+    }
 });
 document.getElementById('tabBtnWeapon').addEventListener('click', () => {
-    if (currentTab !== 'weapon') showTab('weapon');
+    if (currentTab !== 'weapon') {
+        showTab('weapon');
+        renderCurrentTab();
+    }
 });
 
 [

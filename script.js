@@ -731,41 +731,59 @@ async function removeMember(id) {
 
 async function loadCharOwnership(memberId) {
     const { data, error } = await supabaseClient
-        .from('character_ownership')
-        .select('character_name, constellation')
+        .from('member_character_status')
+        .select('character_name, constellation, owned')
         .eq('member_id', memberId);
     if (error) throw error;
     charOwnership.clear();
-    (data || []).forEach(row => charOwnership.set(row.character_name, row.constellation));
+    (data || []).forEach(row => {
+        if (row.owned === false) return;
+        charOwnership.set(row.character_name, row.constellation);
+    });
 }
 
 async function loadWeaponOwnership(memberId) {
     const { data, error } = await supabaseClient
-        .from('weapon_ownership')
-        .select('weapon_name, refinement')
+        .from('member_weapon_status')
+        .select('weapon_name, refinement, owned')
         .eq('member_id', memberId);
     if (error) throw error;
     weaponOwnership.clear();
-    (data || []).forEach(row => weaponOwnership.set(row.weapon_name, row.refinement));
+    (data || []).forEach(row => {
+        if (row.owned === false) return;
+        weaponOwnership.set(row.weapon_name, row.refinement);
+    });
 }
 
 async function saveCharItem(memberId, charName, constellation) {
     if (constellation === null) {
         const { error } = await supabaseClient
-            .from('character_ownership')
+            .from('member_character_status')
             .delete()
             .eq('member_id', memberId)
             .eq('character_name', charName);
         if (error) throw error;
         charOwnership.delete(charName);
     } else {
-        const { error } = await supabaseClient
-            .from('character_ownership')
-            .upsert(
-                { member_id: memberId, character_name: charName, constellation },
-                { onConflict: 'member_id,character_name' }
-            );
-        if (error) throw error;
+        const payload = {
+            member_id: memberId,
+            character_name: charName,
+            owned: true,
+            constellation
+        };
+        const { data: updatedRows, error: updateError } = await supabaseClient
+            .from('member_character_status')
+            .update(payload)
+            .eq('member_id', memberId)
+            .eq('character_name', charName)
+            .select('id');
+        if (updateError) throw updateError;
+        if (!updatedRows || updatedRows.length === 0) {
+            const { error: insertError } = await supabaseClient
+                .from('member_character_status')
+                .insert(payload);
+            if (insertError) throw insertError;
+        }
         charOwnership.set(charName, constellation);
     }
 }
@@ -773,20 +791,32 @@ async function saveCharItem(memberId, charName, constellation) {
 async function saveWeaponItem(memberId, weaponName, refinement) {
     if (refinement === null) {
         const { error } = await supabaseClient
-            .from('weapon_ownership')
+            .from('member_weapon_status')
             .delete()
             .eq('member_id', memberId)
             .eq('weapon_name', weaponName);
         if (error) throw error;
         weaponOwnership.delete(weaponName);
     } else {
-        const { error } = await supabaseClient
-            .from('weapon_ownership')
-            .upsert(
-                { member_id: memberId, weapon_name: weaponName, refinement },
-                { onConflict: 'member_id,weapon_name' }
-            );
-        if (error) throw error;
+        const payload = {
+            member_id: memberId,
+            weapon_name: weaponName,
+            owned: true,
+            refinement
+        };
+        const { data: updatedRows, error: updateError } = await supabaseClient
+            .from('member_weapon_status')
+            .update(payload)
+            .eq('member_id', memberId)
+            .eq('weapon_name', weaponName)
+            .select('id');
+        if (updateError) throw updateError;
+        if (!updatedRows || updatedRows.length === 0) {
+            const { error: insertError } = await supabaseClient
+                .from('member_weapon_status')
+                .insert(payload);
+            if (insertError) throw insertError;
+        }
         weaponOwnership.set(weaponName, refinement);
     }
 }

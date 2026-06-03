@@ -688,7 +688,7 @@ let currentTab = 'char';
 
 // Map: character name -> constellation (null=未所持, 0=無凸, 1-6=N凸)
 const charOwnership = new Map();
-// Map: character name -> level (1-90)
+// Map: character name -> level (1-100)
 const charLevels = new Map();
 // Map: weapon name -> refinement (null=未所持, 1-5=精錬N)
 const weaponOwnership = new Map();
@@ -849,7 +849,7 @@ function showLoading(visible) {
 function sanitizeCharLevel(rawLevel) {
     const level = parseInt(rawLevel, 10);
     if (Number.isNaN(level)) return 1;
-    return Math.min(90, Math.max(1, level));
+    return Math.min(100, Math.max(1, level));
 }
 
 // ================================================
@@ -1083,7 +1083,7 @@ function createCharCard(char, constellation, level) {
     levelInput.type = 'number';
     levelInput.className = 'level-input';
     levelInput.min = '1';
-    levelInput.max = '90';
+    levelInput.max = '100';
     levelInput.step = '1';
     levelInput.inputMode = 'numeric';
     levelInput.value = String(initialLevel);

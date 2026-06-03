@@ -27,7 +27,7 @@
 
 1. Supabase ダッシュボードの **SQL Editor** を開きます。
 2. このリポジトリの **`supabase-schema.sql`** の内容をそのまま貼り付けて実行します。
-3. `members`・`character_ownership`・`weapon_ownership` の3テーブルが作成されます。
+3. `members`・`member_character_status`・`member_weapon_status` の3テーブルが作成されます。
 
 ### 3. config.js を作成する
 
@@ -71,8 +71,8 @@ window.SUPABASE_ANON_KEY = '******';
 | テーブル名          | 概要                         |
 |---------------------|------------------------------|
 | members             | メンバー名を管理             |
-| character_ownership | メンバーごとのキャラ所持状況 |
-| weapon_ownership    | メンバーごとの武器所持状況   |
+| member_character_status | メンバーごとのキャラ所持状況 |
+| member_weapon_status    | メンバーごとの武器所持状況   |
 
 RLS（Row Level Security）は全員読み書き可能（認証なし）に設定されています。
 

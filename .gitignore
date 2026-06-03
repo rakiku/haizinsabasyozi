@@ -1,0 +1,6 @@
+# Supabase 接続情報（リポジトリに含めない）
+config.js
+
+# OS
+.DS_Store
+Thumbs.db

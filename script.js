@@ -696,12 +696,10 @@ const weaponOwnership = new Map();
 // ================================================
 
 function initSupabase() {
-    const url = window.SUPABASE_URL;
-    const key = window.SUPABASE_ANON_KEY;
-    if (!url || !key || url.includes('YOUR_SUPABASE')) {
-        throw new Error('SUPABASE_CONFIG_MISSING');
-    }
-    supabaseClient = window.supabase.createClient(url, key);
+    supabaseClient = window.supabase.createClient(
+        window.SUPABASE_URL,
+        window.SUPABASE_ANON_KEY
+    );
 }
 
 async function loadMembers() {
@@ -1081,7 +1079,7 @@ function renderWeaponTab() {
     const sortM = document.getElementById('weaponSort').value;
 
     let filtered = allWeaponList.filter(w => {
-        // Show only ★4+ by default; rarity filter lets user narrow further
+        // ★1〜3 の武器は管理対象外のため常に除外。★4 / ★5 のみ表示する。
         if (w.rarity < 4) return false;
         if (rarityF && w.rarity !== parseInt(rarityF)) return false;
 
@@ -1246,31 +1244,37 @@ document.getElementById('tabBtnWeapon').addEventListener('click', () => {
 // INITIALIZATION
 // ================================================
 
+function isConfigMissing() {
+    return (
+        window._configMissing ||
+        !window.SUPABASE_URL ||
+        !window.SUPABASE_ANON_KEY ||
+        window.SUPABASE_URL.includes('YOUR_SUPABASE')
+    );
+}
+
 async function init() {
     showLoading(true);
+    if (isConfigMissing()) {
+        showLoading(false);
+        document.getElementById('memberList').innerHTML = `
+            <p class="error-text">
+                ⚠️ <strong>config.js が見つかりません。</strong><br><br>
+                <code>config.example.js</code> をコピーして <code>config.js</code> を作成し、<br>
+                Supabase の URL と匿名キーを設定してください。<br><br>
+                詳しくは <a href="README.md" style="color:#7eb8f7">README.md</a> を参照してください。
+            </p>`;
+        return;
+    }
     try {
-        if (window._configMissing) {
-            throw new Error('SUPABASE_CONFIG_MISSING');
-        }
         initSupabase();
         await showHomeView();
     } catch (err) {
+        document.getElementById('memberList').innerHTML =
+            `<p class="error-text">初期化エラー: ${escapeHtml(err.message)}</p>`;
+    } finally {
         showLoading(false);
-        if (err.message === 'SUPABASE_CONFIG_MISSING') {
-            document.getElementById('memberList').innerHTML = `
-                <p class="error-text">
-                    ⚠️ <strong>config.js が見つかりません。</strong><br><br>
-                    <code>config.example.js</code> をコピーして <code>config.js</code> を作成し、<br>
-                    Supabase の URL と匿名キーを設定してください。<br><br>
-                    詳しくは <a href="README.md" style="color:#7eb8f7">README.md</a> を参照してください。
-                </p>`;
-        } else {
-            document.getElementById('memberList').innerHTML =
-                `<p class="error-text">初期化エラー: ${escapeHtml(err.message)}</p>`;
-        }
-        return;
     }
-    showLoading(false);
 }
 
 init();

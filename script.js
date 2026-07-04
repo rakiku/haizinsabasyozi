@@ -121,6 +121,7 @@ const characters = [
     { name: "アーロイ", weapon: "弓", element: "氷", rarity: ['☆５'], release_version: "2.1" },
     { name: "ニコ", weapon: "法器", element: "炎", rarity: ['☆５'], release_version: "Luna VII (6.6)" },
     { name: "ローエン", weapon: "長柄武器", element: "氷", rarity: ['☆５'], release_version: "Luna VII (6.6)" },
+    { name: "サンドローネ", country: "スネージナヤ", weapon: "両手剣", element: "氷", birth_month: "１月", birthday: "1月13日", version: "n.7", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "守護者・堕天", local_specialty: "探測ユニット・子機", ascension_stat: "会心率", distributed: false, talent_book: "流浪", talent_weekly: "狂人の誓約", special_dish: "スタミナ軽減系", trace: false, costume: false, enemy_material: ["破損した駆動軸"], training_road: false, release_version: "Luna VIII(6.7)" },
     { name: "プルーネ", weapon: "法器", element: "風", rarity: ['☆４'], release_version: "Luna VII (6.6)" },
 ];
 
@@ -271,6 +272,7 @@ const allWeapons = {
             { name: "文使い", rarity: 3, type: "弓", ascension_stat: "会心ダメージ", is_distributed: false }
         ],
         "両手剣": [
+            { name: "超越の鍵", rarity: 5, type: "両手剣", ascension_stat: "会心ダメージ", is_distributed: false },
             { name: "狼の武勲詩", rarity: 5, type: "両手剣", ascension_stat: "会心率", is_distributed: false },
             { name: "万能の鍵", rarity: 4, type: "両手剣", ascension_stat: "元素チャージ効率", is_distributed: false },
             { name: "千烈の日輪", rarity: 5, type: "両手剣", ascension_stat: "会心率", is_distributed: false },

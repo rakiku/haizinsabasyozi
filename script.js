@@ -328,7 +328,7 @@ const allWeapons = {
         ],
         "片手剣": [
             { name: "導炎の源", rarity: 4, type: "片手剣", ascension_stat: "元素熟知", is_distributed: false },
-            { name: "異端を狩る溶刀", rarity: 4, type: "片手剣", ascension_stat: "会心率", is_distributed: false },
+            { name: "異端を狩る溶刃", rarity: 4, type: "片手剣", ascension_stat: "会心率", is_distributed: false },
             { name: "星鋒の剣", rarity: 5, type: "片手剣", ascension_stat: "会心率", is_distributed: false },
             { name: "白銀の湖を舞う翼", rarity: 5, type: "片手剣", ascension_stat: "会心率", is_distributed: false },
             { name: "三日月の含光", rarity: 5, type: "片手剣", ascension_stat: "会心ダメージ", is_distributed: false },

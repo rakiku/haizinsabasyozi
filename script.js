@@ -390,7 +390,8 @@ const allWeapons = {
             { name: "チ虎魚の刀", rarity: 3, type: "片手剣", ascension_stat: "攻撃力", is_distributed: false },
             { name: "匣中龍吟", rarity: 4, type: "片手剣", ascension_stat: "攻撃力", is_distributed: false },
             { name: "冷刃", rarity: 3, type: "片手剣", ascension_stat: "攻撃力", is_distributed: false },
-            { name: "蒼耀", rarity: 5, type: "片手剣", ascension_stat: "会心率", is_distributed: false }
+            { name: "蒼耀", rarity: 5, type: "片手剣", ascension_stat: "会心率", is_distributed: false },
+            { name: "銀灯", rarity: 4, type: "片手剣", ascension_stat: "元素熟知", is_distributed: false },
         ]
     };
 

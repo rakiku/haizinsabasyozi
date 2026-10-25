@@ -127,7 +127,8 @@ const characters = [
     { name: "プルーネ", weapon: "法器", element: "風", rarity: ['☆４'], release_version: "Luna VII (6.6)" },
     { name: "ヴォジャニーツァ", country: "スネージナヤ", weapon: "法器", element: "水", birth_month: "３月", birthday: "3月29日", version: "n.1", rarity: ['☆５'], body: "中身女性", role: ["オフフィールドサポーター","オフフィールドライフキーパー"], energy: 60, talent_boss: "不滅の副産物", local_specialty: "フロストフラワー", ascension_stat: "HP", distributed: true, talent_book: "不屈", talent_weekly: "狂人の誓約", special_dish: "継続回復系", trace: false, costume: false, enemy_material: ["合成獣のコア"], training_road: false, release_version: "7.1" }, 
     { name: "ヴェスナ", country: "スネージナヤ", weapon: "片手剣", element: "風", birth_month: "２月", birthday: "2月14日", version: "n.1", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "遊雪の刃", local_specialty: "ザラトイアリャーク", ascension_stat: "HP", distributed: true, talent_book: "栄光", talent_weekly: "冒涜の新芽", special_dish: "防御系", trace: false, costume: false, enemy_material: ["幻光の屑"], training_road: false, release_version: "7.1" },
-    
+    { name: "ミティヤ", weapon: "法器", element: "雷", rarity: ['☆５'], release_version: "1.0" },
+    { name: "バレリー", weapon: "片手剣", element: "雷", rarity: ['☆４'], release_version: "1.0" },
 ];
 
 const allWeapons = {
@@ -177,6 +178,7 @@ const allWeapons = {
             { name: "災憾", rarity: 5, type: "長柄武器", ascension_stat: "", is_distributed: false }
         ],
         "法器": [
+            { name: "秘星の聖典", rarity: 5, type: "法器", ascension_stat: "会心率", is_distributed: false },
              { name: "雪に沈む心", rarity: 4, type: "法器", ascension_stat: "会心率", is_distributed: false },
              { name: "旋流の讃美歌", rarity: 5, type: "法器", ascension_stat: "会心率", is_distributed: false },
             { name: "諸王の対局", rarity: 4, type: "法器", ascension_stat: "会心率", is_distributed: false },
